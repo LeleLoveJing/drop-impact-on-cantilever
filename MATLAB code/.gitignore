@@ -1,2 +1,5 @@
 # Ignore all MATLAB autosave files
 *.asv
+
+# Ignore M~ files
+*.m~
