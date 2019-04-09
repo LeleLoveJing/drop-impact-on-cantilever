@@ -5,7 +5,7 @@
 % this case we have an analytic solution for s_0(t) for all time. We drop
 % the 0 subscripts.
 
-close all
+close all % Closes all figures currently open
 
 %%
 % Solution for s_0(t) and other quantities
@@ -19,6 +19,10 @@ sddot = @(t) 2 * (1 + 4 * t).^(-3/2);
 d = @(t) 2 * sqrt(t - s(t));
 ddot = @(t) (1 - sdot(t)) ./ sqrt(t - s(t));
 
+% Turnover point in the case of a fixed plate
+d_fixed = @(t) 2 * sqrt(t);
+ddot_fixed = @(t) 1 ./ sqrt(t);
+
 % Jet thickness
 hJ = @(t) (pi / 4) * (t - s(t)).^(3/2);
 
@@ -29,14 +33,38 @@ tvals = 0.01:0.01:10;
 
 %%
 % Plotting cantilever displacement
-figure(1);
+plotno = 1;
+figure(plotno);
 plot(tvals, s(tvals));
+xlabel("t");
+ylabel("s(t)");
+title("Cantilever displacement, s(t)");
 
-figure(2);
+plotno = plotno + 1;
+figure(plotno);
 plot(tvals, sdot(tvals));
+xlabel("t");
+ylabel("s'(t)");
+title("Time derivative of cantilever displacement, s'(t)");
 
-figure(3);
+plotno = plotno + 1;
+figure(plotno);
 plot(tvals, sddot(tvals));
+xlabel("t");
+ylabel("s''(t)");
+title("Second time derivative of cantilever displacement, s''(t)");
+
+%%
+% Turnover point evolution
+plotno = plotno + 1;
+figure(plotno);
+hold on
+plot(tvals, d(tvals));
+plot(tvals, 2 * sqrt(tvals));
+xlabel("t");
+ylabel("d(t)");
+legend("Cantilever", "Fixed plate");
+title("Location of turnover point, d(t)");
 
 %%
 % Outer region solution
@@ -74,23 +102,41 @@ outer_v = @(X, Z, t) -imag(dW(X + 1i * Z, t));
 
 % Free surface shape
 H = @(X, t) 0.5 * abs(X) .* sqrt(X.^2 - 4 * (t - s(t))) - s(t);
+
 tval = 0.1;
 Xs = d(tval) * (1.0 : 1e-6 : 2);
-figure(5);
+plotno = plotno + 1;
+figure(plotno);
 pbaspect([1 1 1])
 hold on
-plot(Xs, H(Xs, tval));
-plot(-Xs, H(-Xs, tval));
+plot(Xs, H(Xs, tval), 'b');
+plot(-Xs, H(-Xs, tval), 'b');
 hold off
-axis equal
+xlim(1.1 * [-max(Xs), max(Xs)]);
+ylim(1.1 * [0, max(H(Xs, tval))]);
+daspect([1 1 1]);
+xlabel("X");
+ylabel("Z");
+title(sprintf("Free surface H(X, t) in outer region at time t = %g", tval)); 
 
 % Pressure on the cantilever
-figure(6);
 P = @(X, t) - sddot(t) .* sqrt(d(t).^2 - X.^2) ... 
     + (1 - sdot(t)) .* d(t) .* ddot(t) ./ sqrt(d(t).^2 - X.^2);
+P_fixed = @(X, t) d_fixed(t) .* ddot_fixed(t) ./ sqrt(d_fixed(t).^2 - X.^2);
+
 tval = 0.1;
 Xs = d(tval) * (-1 : 1e-3 : 1);
+Xs_fixed = d_fixed(tval) * (-1 : 1e-3 : 1);
+
+plotno = plotno+1;
+figure(plotno);
+hold on
 plot(Xs, P(Xs, tval));
+plot(Xs, P_fixed(Xs_fixed, tval));
+xlabel("X");
+ylabel("P(X, 0, t)");
+legend("Cantilever", "Fixed plate");
+title(sprintf("Pressure on cantilever in outer region at time t = %g", tval));
 
 
 %%
@@ -102,8 +148,27 @@ inner_h = @(sigma, t) hJ(t) * (1 + 4 * sqrt(sigma) / pi);
 
 sigmas = 0:1e-6:20;
 tval = 0.1;
-figure(7);
+plotno = plotno + 1;
+figure(plotno);
 plot(surface_x(sigmas, tval), inner_h(sigmas, tval));
+xlabel("$$\hat{x}$$", 'Interpreter','latex', 'FontSize', 18);
+ylabel("$$\hat{z}$$", 'Interpreter','latex', 'FontSize', 18);
+title(sprintf("Free surface shape in the inner region at time t = %g", tval));
 
+% Pressure on the cantilever
+cantilever_x = @(sigma, t) ...
+    -(hJ(t) / pi) * (sigma + 4 * sqrt(sigma) + log(sigma) + 1);
+inner_p = @(sigma, t) 2 * ddot(t)^2 * sqrt(sigma) ./ (1 + sqrt(sigma)).^2;
 
+plotno = plotno + 1;
+figure(plotno);
+sigmas_1 = 0:1e-8:0.5;
+hold on
+plot(cantilever_x(sigmas_1, tval), inner_p(sigmas_1, tval), 'b');
+sigmas_2 = 0.5:1e-4:20;
+plot(cantilever_x(sigmas_2, tval), inner_p(sigmas_2, tval), 'b');
+hold off
+xlabel("$$\hat{x}$$", 'Interpreter','latex', 'FontSize', 18);
+ylabel("$$\hat{p}_0(\hat{x}, 0, t)$$", 'Interpreter','latex', 'FontSize', 18);
+title(sprintf("Pressure on the cantilever in the inner region at time t = %g", tval));
 
