@@ -18,6 +18,8 @@ sddot = @(t) 2 * (1 + 4 * t).^(-3/2);
 % Turnover point and its time derivative 
 d = @(t) 2 * sqrt(t - s(t));
 ddot = @(t) (1 - sdot(t)) ./ sqrt(t - s(t));
+dddot = @(t) - sddot(t) ./ sqrt(t - s(t)) ...
+    - (1 - sdot(t)).^2 ./ (2 * (t - s(t)).^(3/2));
 
 % Turnover point in the case of a fixed plate
 d_fixed = @(t) 2 * sqrt(t);
@@ -171,4 +173,26 @@ hold off
 xlabel("$$\hat{x}$$", 'Interpreter','latex', 'FontSize', 18);
 ylabel("$$\hat{p}_0(\hat{x}, 0, t)$$", 'Interpreter','latex', 'FontSize', 18);
 title(sprintf("Pressure on the cantilever in the inner region at time t = %g", tval));
+
+
+%%
+% Jet region solution
+jet_x = @(tau, t) 2 * ddot(tau) .* (t - tau) .* d(tau);
+jet_u = @(tau) 2 * ddot(tau);
+jet_h = @(tau, t) (pi / 4) * ddot(tau) .* (tau - s(tau)).^(3/2) ...
+    ./ (ddot(tau) - 2 * dddot(tau) .* (t - tau));
+
+% Free surface plot
+tval = 0.1;
+taus = 0:1e-6:tval;
+plotno = plotno + 1;
+figure(plotno);
+plot(jet_x(taus, tval), jet_h(taus, tval));
+xlim(1.1 * [0, max(jet_x(taus, tval))]);
+ylim(2 * [0, max(jet_h(taus, tval))]);
+daspect([1 1 1]);
+xlabel("$$\bar{x}$$", 'Interpreter', 'latex', 'FontSize', 18);
+ylabel("$$\bar{z}$$", 'Interpreter', 'latex', 'FontSize', 18);
+
+
 
