@@ -1,5 +1,5 @@
 function out = plotting_cantilever(tvals, s, sdot, sddot)
-%PLOTTING Creates figures of quantities of interest for droplet impact.
+%PLOTTING_CANTILEVER Creates figures of quantities of interest for droplet impact.
 %   Given input of a time range tvals, along with arrays for the cantilever
 %   displacement s and its first and second time derivative sdot and sddot,
 %   this function creates plots of the different physical quantities that
