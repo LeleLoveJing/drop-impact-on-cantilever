@@ -14,7 +14,8 @@ sdot = @(t) 1 - 1 ./ sqrt(1 + 4 * t);
 sddot = @(t) 2 * (1 + 4 * t).^(-3/2);
 
 %%
-% Creating plots for a specific time array using the function "plotting"
+% Creating plots for a specific time array using the function
+% plotting_cantilever
 tvals = 0.01:0.01:10;
-plotting(tvals, s(tvals), sdot(tvals), sddot(tvals));
+plotting_cantilever(tvals, s(tvals), sdot(tvals), sddot(tvals));
 
