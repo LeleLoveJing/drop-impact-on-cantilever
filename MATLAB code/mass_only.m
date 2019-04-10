@@ -5,8 +5,6 @@
 % this case we have an analytic solution for s_0(t) for all time. We drop
 % the 0 subscripts.
 
-close all % Closes all figures currently open
-
 %%
 % Solution for cantilever displacement and its derivatives
 s = @(t) 0.5 + t - 0.5 * sqrt(1 + 4 * t); 
