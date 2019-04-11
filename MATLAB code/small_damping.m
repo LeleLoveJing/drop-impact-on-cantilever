@@ -8,22 +8,33 @@
 
 %%
 % Solution for cantilever displacement and its derivatives
-beta = 1e-2; % Damping constant
+beta = 1e-1; % Damping constant
 
-s0 = @(t) 0.5 + t - 0.5 * sqrt(1 + 4 * t); % Leading order solution
-s1 = @(t) ((1 + 4 * t) / 12 - ...
-    (1 + 6 * t .* (1 + t)) ./ (12 * sqrt(1 + 4 * t))); % First order correction
-s = @(t) s0(t) + beta * s1(t);
+% Homogeneous solution with no damping
+s0 = @(t) 0.5 + t - 0.5 * sqrt(1 + 4 * t); 
+sdot0 = @(t) 1 - 1 ./ sqrt(1 + 4 * t);
+sddot0 = @(t) 2 * (1 + 4 * t).^(-3/2);
 
-s = @(t) 0.5 + t - 0.5 * sqrt(1 + 4 * t) ...
+% Solution with first order correction due to damping
+s = @(t) s0(t) ...
     - (beta / 12) * ((1 + 6 * t + 6 * t.^2) ./ sqrt(1 + 4 * t) - 1 - 4 * t);
-sdot = @(t) 1 - 1 ./ sqrt(1 + 4 * t) ...
+sdot = @(t) sdot0(t) ...
     - (beta / 3) * ((1 + 6 * t + 9 * t.^2) / (1 + 4 * t).^(3/2) - 1);
-sddot = @(t) 2 ./ (1 + 4 * t).^(3/2) ...
+sddot = @(t) sddot0(t) ...
     - 2 * beta * (1 + 3 * t) ./ (1 + 4 * t).^(5/2);
 
 %%
 % Creating plots for a specific time array using the function
 % plotting_cantilever
-tvals = 0.01:0.01:10;
-plotting_cantilever(tvals, s(tvals), sdot(tvals), sddot(tvals));
+tvals = 0.01:1000:1e5;
+close all
+figure;
+hold on
+plot(tvals, s(tvals))
+plot(tvals, s0(tvals));
+plot(tvals, -beta * tvals.^1.5 / 4);
+plot(tvals, tvals);
+hold off
+legend("Damped", "Mass only", "Limit", "Other limit");
+
+% plotting_cantilever(tvals, s(tvals), sdot(tvals), sddot(tvals));
