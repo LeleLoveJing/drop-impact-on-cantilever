@@ -1,4 +1,4 @@
-%% Droplet impact on a cantilever: small_stiff.m
+%% Droplet impact on a cantilever: small_stiffness.m
 % 
 % This script deals with the distinguised limit where there is a small
 % amount of stiffness, characterised by delta, which is larger than the
