@@ -10,7 +10,7 @@
 %%
 % Solution for cantilever displacement and its derivatives
 beta = 1e-2;
-delta = 1e-2;
+delta = 1e-3;
 
 % Homogeneous solution with no damping or stiffness
 s0 = @(t) 0.5 + t - 0.5 * sqrt(1 + 4 * t); 
@@ -31,17 +31,26 @@ sddot = @(t) sddot0(t) ...
     - 2 * beta * (1 + 3 * t) ./ (1 + 4 * t).^(5/2) ...
     - (delta / 15) ...
         * ((4 + 40 * t + 135 * t.^2 + 150 * t.^3) ./ (1 + 4 * t).^(5/2) - 4);
+ 
+%%
+% Later time solution for t > (12 / delta)^(2/3)
+slate = @(t) t - (12/delta)^(2/3) * sqrt(5 * (delta / 12)^(2/3) * t - 4);
     
-    
+%%
+% Messing
+tdelta = (12 / delta)^(2/3)
+
+
 %%
 % Creating plots for a specific time array using the function
 % plotting_cantilever
-tvals = 0.01:0.01:100;
+tvals1 = 0.01:0.01:tdelta;
+tvals2 = tdelta:0.01:3 * tdelta;
 
-close all
-figure;
 hold on
-plot(tvals, s(tvals))
-plot(tvals, s0(tvals));
+plot(tvals1, s(tvals1));
+plot(tvals2, slate(tvals2));
 hold off
-legend("Damping & Stiffness", "Mass only");
+
+
+% plotting_cantilever(tvals, s(tvals), sdot(tvals), sddot(tvals));
