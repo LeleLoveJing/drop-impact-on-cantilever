@@ -35,7 +35,8 @@ sddot = @(t) sddot0(t) ...
 %%
 % Later time solution for t > (12 / delta)^(2/3)
 slate = @(t) t - (12/delta)^(2/3) * sqrt(5 * (delta / 12)^(2/3) * t - 4);
-    
+
+scomp = @(t) s0(t) + slate(t) - t;
 %%
 % Messing
 tdelta = (12 / delta)^(2/3)
@@ -44,13 +45,15 @@ tdelta = (12 / delta)^(2/3)
 %%
 % Creating plots for a specific time array using the function
 % plotting_cantilever
-tvals1 = 0.01:0.01:tdelta;
-tvals2 = tdelta:0.01:3 * tdelta;
+tvals1 = 0.01:0.01:1.1 * tdelta;
+tvals2 = 0.9 * tdelta:0.01:3 * tdelta;
+tvalstot = 0.01:0.01:3 * tdelta;
 
 hold on
-plot(tvals1, s(tvals1));
-plot(tvals2, slate(tvals2));
+plot(tvalstot, s(tvalstot));
+plot(tvalstot, slate(tvalstot));
+plot(tvalstot, scomp(tvalstot));
 hold off
-
+legend("s1", "s2", "scomp");
 
 % plotting_cantilever(tvals, s(tvals), sdot(tvals), sddot(tvals));
