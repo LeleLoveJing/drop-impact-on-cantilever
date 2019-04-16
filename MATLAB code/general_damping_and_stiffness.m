@@ -1,22 +1,14 @@
-%% Droplet impact on a cantilever: general_damping_and_stiffness.m
-% 
-% This script deals with general values of damping and stiffness,
-% characterised by beta and delta. There is no analytical solution in this
-% case, so it uses ode45 to solve the differential equation numerically.
-% This solution is only valid if beta and delta are O(1). Recall the ODE
-% that is being solved is
-% s''(t) + beta * s'(t) + delta * s(t) = (d^2/dt^2)[(t - s(t))^2],
-% which can be rearranged to give a formula for s''(t)
-% s''(t) = [2(1 - s'(t))^2 - beta * s'(t) - delta * s(t)] ...
-%              / (1 + 2(t - s(t))),
-% The initial conditions are s(0) = s'(0) = 0.
+function [s, sdot, sddot] = numerical_solution(tvals, beta, delta)
+%NUMERICAL_SOLUTION Gives the numerical solution to the cantilever
+%displacement for any order 1 damping beta and stiffness delta.
+%   This function solves the governing ODE for the cantilever displacement
+%   for any general beta and delta, given that they are order 1. It does
+%   this by expressing the ODE as a system of first order ODEs and solving
+%   using ode45. The input is tvals, the array for time which the ODE
+%   should be solved over, and the physical parameters beta and delta. It 
+%   outputs an array for the cantilever displacement s and its first and
+%   second derivatives sdot and sddot.
 
-
-%%
-% Solution for cantilever displacement and its derivatives
-beta = 1e-3; % Damping constant
-delta = 1e-3; % Stiffness constant
-tvals = 0.01:0.01:100; % Time domain
 
 % Function for the second derivative in terms of s and its derivative sdot
 s_2nd_deriv = @(t, s, sdot) ...
@@ -29,15 +21,12 @@ s_2nd_deriv = @(t, s, sdot) ...
 ode_fun = @(t, s_arr) ...
     [s_arr(2); s_2nd_deriv(t, s_arr(1), s_arr(2))];
 
-% Solves the ODE over the time domain
+% Solves the ODE over the time domain with initial conditions s(0) = s'(0)
+% = 0.
 [t, s_arr] = ode45(ode_fun, tvals, [0, 0]);
 
 % Defines arrays for s and its derivatives
 s = s_arr(:, 1);
 sdot = s_arr(:, 2);
 sddot = s_2nd_deriv(t, s, sdot);
-
-
-%%
-% Plotting
-plot(tvals, s);
+end
