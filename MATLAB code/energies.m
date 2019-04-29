@@ -19,19 +19,26 @@ outer_energy = - 2 * epsilon^2 * sdot .* (1 - sdot) .* (tvals - s);
 
 % Energy in the jet region
 jet_energy = zeros(length(tvals), 1);
-for i = 1 : length(tvals)
-    jet_energy(i) = 2 * epsilon^2 * trapz(tvals(1:i), (1 - sdot(1:i)).^3, 1);
+for i = 2 : length(tvals)
+    jet_energy(i) = jet_energy(i-1) ...
+        + trapz(tvals(i-1:i), (1 - sdot(i-1:i)).^3, 1);
 end
+jet_energy = 2 * epsilon^2 * jet_energy;
 
 % Work done on the cantilever
 work_done = zeros(length(tvals), 1);
-for i = 1 : length(tvals)
-    work_done(i) = 2 * epsilon^2 * trapz(tvals(1:i), sdot(1:i) .* force(1:i), 1);
+for i = 2 : length(tvals)
+    work_done(i) = work_done(i-1) ...
+        + trapz(tvals(i-1:i), sdot(i-1:i) .* force(i-1:i), 1);
 end
+work_done = 2 * epsilon^2 * work_done;
 
 % Energy dissipated due to the damping
 energy_diss = zeros(length(tvals), 1);
-for i = 1 : length(tvals)
-   energy_diss(i) = 2 * epsilon^2 * beta * trapz(tvals(1:i), sdot(1:i).^2, 1); 
+for i = 2 : length(tvals)
+   energy_diss(i) = energy_diss(i-1) ...
+       + trapz(tvals(i-1:i), sdot(i-1:i).^2, 1); 
 end
+energy_diss = 2 * epsilon^2 * beta * energy_diss;
+
 
