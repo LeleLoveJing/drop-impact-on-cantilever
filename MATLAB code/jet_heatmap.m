@@ -5,7 +5,7 @@
 % time where the validity of the solution starts to break down, i.e. as
 % we're leaving the Wagner region. 
 
-tmax = 30; % Maximum value of time
+tmax = 100; % Maximum value of time
 
 tvals = 0 : 1e-3 : tmax; % Time domain
 tvals_trans = tvals'; % Transposes as used sometimes
@@ -16,10 +16,9 @@ tvals_trans = tvals'; % Transposes as used sometimes
 % betas = 0 : beta_max / no_grid_points : beta_max; % Values of beta
 % deltas = 0 : delta_max / no_grid_points : delta_max; % Values of delta 
 
-betas = 0 : 0.1 : 1;
-deltas = 0 : 0.1 : 10;
-
-epsilon = 1; % Needs fixing, just sets so we get the answer without 
+% betas = 0 : 0 : 0;
+betas = 0;
+deltas = 0 : 1 : 100;
 
 jet_energies = zeros(length(betas), length(deltas)); % Array for energies
 
@@ -44,10 +43,15 @@ end
 
 % Plots the colour map
 figure;
-imagesc(betas, deltas, jet_energies);
-hold on;
-% contour(betas, deltas, jet_energies, 'LineColor', 'k');
-set(gca,'YDir','normal')
-colorbar
-xlabel("Damping term, beta")
-ylabel("Spring constant, delta");
+% imagesc(betas, deltas, jet_energies);
+% hold on;
+% % contour(betas, deltas, jet_energies, 'LineColor', 'k');
+% set(gca,'YDir','normal')
+% colorbar
+% xlabel("Damping term, beta")
+% ylabel("Spring constant, delta");
+
+plot(deltas, jet_energies);
+xlabel("delta");
+ylabel("Jet energy");
+
