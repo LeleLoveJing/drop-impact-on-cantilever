@@ -1,27 +1,55 @@
-tmax = 2e2; % Maximum value of time
-tvals = 0 : 1e-3 : tmax; % Time domain
 
-beta = 1e2;
-delta = 1e-3;
+% Parameters
+beta = 1e3;
+delta = 1e2;
 
+tmax = 2 * beta % Maximum value of time
+tstep = tmax / 1000; % Time steps
+tvals = 0 : tstep : tmax; % Time domain
+
+% Asymptotic expansions for large beta
 s_inner = 2 * (tvals / beta + exp(-beta * tvals) / beta^2 - 1 / beta^2);
-% s_middle = (2 / beta) * (tvals - 1/beta);
 s_outer =  (2 / delta)  * (1 - exp(-delta * tvals / beta));
-s_composite = (2 / beta^2) * (exp(-beta * tvals) - 1) ...
-    + (2 / delta) * (1 - exp(-delta * tvals / beta));
+s_composite = (2 / delta) * (1 - exp(-delta * tvals / beta)) ...
+    -(2 / beta^2) * (1 - exp(-beta * tvals));
+% jet_energy_asymptotic = (1 - 6 / beta) * tvals;
+jet_energy_asymptotic = tvals - 6 / delta;
 
-close all
-figure;
-hold on
+% Numerical calculation
 [s, sdot, sddot] = numerical_solution(tvals, beta, delta);
+jet_energy_numerical = zeros(length(tvals), 1);
+for i = 2 : length(tvals)
+    jet_energy_numerical(i) = jet_energy_numerical(i-1) ...
+        + trapz(tvals(i-1:i), (1 - sdot(i-1:i)).^3, 1);
+end
+
+% Creating plots
+close all
+
+figure(1);
+hold on
 plot(tvals, s);
-plot(tvals, s_inner);
-% plot(tvals, s_middle);
-% plot(tvals, s_outer);
-% plot(tvals, s_composite);
-legend("Numerical", "Inner");
+plot(tvals, s_composite);
+xlabel("t");
+ylabel("s(t)");
+legend("Numerical", "Composite");
 
+figure(2);
+plot(tvals, (s' - s_composite) );
+xlabel("t");
+ylabel("Error");
+title("Error for s(t)");
 
-figure;
-plot(tvals, s' - s_inner);
+figure(3);
+hold on
+plot(tvals, jet_energy_numerical);
+plot(tvals, jet_energy_asymptotic);
+xlabel("t");
+ylabel("Jet energy");
+legend("Numerical", "Asymptotic");
 
+figure(4);
+plot(tvals, jet_energy_numerical' - jet_energy_asymptotic);
+xlabel("t");
+ylabel("Error");
+title("Error for jet energy");
