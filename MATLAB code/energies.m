@@ -1,5 +1,6 @@
-function [outer_outer_energy, outer_energy, jet_energy, work_done, ...
-    energy_diss] = energies(tvals, s, sdot, sddot, epsilon, beta)
+function [outer_outer_energy, outer_energy, jet_energy, cant_kinetic, ...
+    cant_potential, work_done, energy_diss] ...
+    = energies(tvals, s, sdot, sddot, epsilon, beta, delta)
 %ENERGIES Calculates the different energies given a specific solution
 %   This function takes input of a specific solution to the cantilever
 %   problem, along with the governing physical parameters. It then
@@ -24,6 +25,12 @@ for i = 2 : length(tvals)
         + trapz(tvals(i-1:i), (1 - sdot(i-1:i)).^3, 1);
 end
 jet_energy = 2 * epsilon^2 * jet_energy;
+
+% Kinetic energy of the cantilever
+cant_kinetic = epsilon^2 * sdot.^2;
+
+% Potential energy of the cantilever
+cant_potential = epsilon^2 * delta * s.^2;
 
 % Work done on the cantilever
 work_done = zeros(length(tvals), 1);
