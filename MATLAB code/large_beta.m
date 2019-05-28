@@ -3,7 +3,7 @@
 beta = 1e3;
 delta = 1e2;
 
-tmax = 2 * beta % Maximum value of time
+tmax = 100; % Maximum value of time
 tstep = tmax / 1000; % Time steps
 tvals = 0 : tstep : tmax; % Time domain
 
@@ -27,29 +27,30 @@ end
 close all
 
 figure(1);
-hold on
-plot(tvals, s);
-plot(tvals, s_composite);
-xlabel("t");
-ylabel("s(t)");
-legend("Numerical", "Composite");
+plot(tvals, s_composite, 'LineWidth',2);
+grid on;
+xlabel('$t$', 'Interpreter', 'latex', 'FontSize', 16);
+ylabel('$s_0(t)$', 'Interpreter', 'latex', 'FontSize', 16);
+titletext = sprintf('Displacement of cantilever for $\\beta$ = %g and $\\delta$ = %g', beta, delta);
+title(titletext, 'Interpreter', 'latex', 'FontSize', 14);
+print('figures/large_beta.png', '-dpng');
 
-figure(2);
-plot(tvals, (s' - s_composite) );
-xlabel("t");
-ylabel("Error");
-title("Error for s(t)");
-
-figure(3);
-hold on
-plot(tvals, jet_energy_numerical);
-plot(tvals, jet_energy_asymptotic);
-xlabel("t");
-ylabel("Jet energy");
-legend("Numerical", "Asymptotic");
-
-figure(4);
-plot(tvals, jet_energy_numerical' - jet_energy_asymptotic);
-xlabel("t");
-ylabel("Error");
-title("Error for jet energy");
+% figure(2);
+% plot(tvals, (s' - s_composite) );
+% xlabel("t");
+% ylabel("Error");
+% title("Error for s(t)");
+% 
+% figure(3);
+% hold on
+% plot(tvals, jet_energy_numerical);
+% plot(tvals, jet_energy_asymptotic);
+% xlabel("t");
+% ylabel("Jet energy");
+% legend("Numerical", "Asymptotic");
+% 
+% figure(4);
+% plot(tvals, jet_energy_numerical' - jet_energy_asymptotic);
+% xlabel("t");
+% ylabel("Error");
+% title("Error for jet energy");

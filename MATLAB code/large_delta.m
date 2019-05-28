@@ -1,8 +1,8 @@
 % Parameters
-beta = 1;
+beta = 0;
 delta = 1e4;
 
-tmax = 50; % Maximum value of time
+tmax = 15; % Maximum value of time
 tstep = tmax / 100000; % Time steps
 tvals = 0 : tstep : tmax; % Time domain
 
@@ -21,12 +21,13 @@ s_asy = 2/delta + (A/delta) * cos(sqrt(delta) * sqrt(1 + 2 * tvals) + B) ...
 close all
 
 figure(1);
-hold on
-plot(tvals, s);
-plot(tvals, s_asy);
-legend("Numerical", "Asymptotic");
-xlabel("t");
-ylabel("s(t)");
+plot(tvals, s_asy, 'LineWidth',1);
+grid on;
+xlabel('$t$', 'Interpreter', 'latex', 'FontSize', 16);
+ylabel('$s_0(t)$', 'Interpreter', 'latex', 'FontSize', 16);
+titletext = sprintf('Displacement of cantilever for $\\beta$ = %g and $\\delta$ = %g', beta, delta);
+title(titletext, 'Interpreter', 'latex', 'FontSize', 11.5);
+print('figures/large_delta.png', '-dpng');
 
 
 
