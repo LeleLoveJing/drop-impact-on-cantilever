@@ -40,7 +40,7 @@ close all
 % Physical parameters
 epsilon = 1e-3;
 beta = 1;
-delta = 10;
+delta = 1;
 
 alpha = epsilon^2;
 gamma = beta / epsilon^2;
